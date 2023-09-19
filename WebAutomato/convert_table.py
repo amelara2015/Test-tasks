@@ -65,6 +65,9 @@ def convert_table(source_path, template_path, target_path, organization, api_key
   # Приводим столбцы с датой в соответствие с шаблоном
   target_df = set_datetime_type(target_df)
 
+  # приводим тип столбцов в соответствие с шаблоном
+  target_df = target_df.astype(template_df.dtypes)
+
   # сохраняем результат
   target_df.to_csv(target_path, index=False)
   print(f'Создан фаил: {target_path} \nБыли использованы следующие столбцы: \n{parse_dict}')
