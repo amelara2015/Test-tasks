@@ -24,7 +24,7 @@ def get_response(content, promt=None, max_tokens=512):
   message = response["choices"][-1]["message"]["content"]
   return message
 
-# преобразует первые 3 строки пандас таблиы в тестовое представление для загрузки в чат гпт
+# преобразует первые 3 строки пандас таблиы в текстовое представление для загрузки в чат гпт
 def make_text_tab(df): 
  return f'Headers: {df.columns.tolist()}\nValues:\n{df.head(3).values.tolist()}'
 
@@ -39,7 +39,7 @@ def make_parse_dict(template_df, source_df):
     
     message = get_response(content)
     
-    # ищем название столбца в ответе  
+    # ищем название столбца в ответе чат гпт 
     for parse_col in source_df.columns:
       if message.find(parse_col) != -1:
         parse_dict[parse_col] = col
@@ -62,7 +62,7 @@ def convert_table(source_path, template_path, target_path, organization, api_key
   # создаём таблицу в соответствии с шаблоном
   target_df = source_df[parse_dict.keys()].rename(columns=parse_dict)
 
-  # Приводим столбцы с датой в соответствие с шаблоном
+  # приводим столбцы с датой в соответствие с шаблоном
   target_df = set_datetime_type(target_df)
 
   # приводим тип столбцов в соответствие с шаблоном
