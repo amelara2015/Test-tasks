@@ -1,0 +1,47 @@
+https://sqliteonline.com/
+
+А) какую сумму в среднем в месяц тратит:
+- пользователи в возрастном диапазоне от 18 до 25 лет включительно
+- пользователи в возрастном диапазоне от 26 до 35 лет включительно
+
+SELECT AVG(price)
+FROM Purchases
+JOIN Items ON Purchases.itemid=Items.itemid
+WHERE EXTRACT(MONTH FROM date)=EXTRACT(MONTH FROM CURRENT_DATE) 
+AND userid in (SELECT userid FROM Users WHERE age BETWEEN 18 AND 25)
+
+SELECT AVG(price)
+FROM Purchases
+JOIN Items ON Purchases.itemid=Items.itemid
+WHERE EXTRACT(MONTH FROM date)=EXTRACT(MONTH FROM CURRENT_DATE) 
+AND userid in (SELECT userid FROM Users WHERE age BETWEEN 26 AND 35)
+
+
+
+Б) в каком месяце года выручка от пользователей в возрастном диапазоне 35+ самая большая
+
+SELECT EXTRACT(MONTH FROM date), MAX(price)
+FROM Purchases
+JOIN Items ON Purchases.itemid=Items.itemid
+WHERE userid in (SELECT userid FROM Users WHERE age >= 35)
+GROUP BY 1
+
+
+В) какой товар обеспечивает дает наибольший вклад в выручку за последний год
+
+SELECT Purchases.itemid, SUM(price) FROM Purchases
+JOIN Items ON Purchases.itemid=Items.itemid
+WHERE EXTRACT(YEAR FROM date)=EXTRACT(YEAR FROM CURRENT_DATE)
+GROUP BY Purchases.itemid
+ORDER BY 2 DESC
+
+
+
+Г) топ-3 товаров по выручке и их доля в общей выручке за любой год
+
+SELECT itemid, sum_price, sum_price / Sum(sum_price) OVER() AS proportion FRom 
+(SELECT Purchases.itemid, SUM(price) as sum_price FROM Purchases
+JOIN Items ON Purchases.itemid=Items.itemid
+GROUP BY Purchases.itemid
+ORDER BY 2 DESC
+LIMIT 3)
